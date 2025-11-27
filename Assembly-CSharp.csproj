@@ -45,6 +45,7 @@
     <Analyzer Include="C:\Program Files\Unity\Hub\Editor\2022.3.62f2\Editor\Data\Tools\Unity.SourceGenerators\Unity.Properties.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\_Scripts\Misc\EnemyData.cs" />
     <Compile Include="Assets\_Scripts\Misc\MeshCombiner.cs" />
     <Compile Include="Assets\_Scripts\Player\MouseMovement.cs" />
     <Compile Include="Assets\_Scripts\Player\PlayerMovement.cs" />
