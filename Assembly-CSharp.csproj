@@ -47,8 +47,11 @@
   <ItemGroup>
     <Compile Include="Assets\_Scripts\Misc\EnemyData.cs" />
     <Compile Include="Assets\_Scripts\Misc\MeshCombiner.cs" />
+    <Compile Include="Assets\_Scripts\ObjectPooling\ObjectPooler.cs" />
+    <Compile Include="Assets\_Scripts\ObjectPooling\IPooledObject.cs" />
     <Compile Include="Assets\_Scripts\Player\MouseMovement.cs" />
     <Compile Include="Assets\_Scripts\Player\PlayerMovement.cs" />
+    <None Include="Assets\READ ME.txt" />
     <None Include="Assets\EmaceArt\Slavic World Free\Plugin\Grass.shader" />
     <None Include="Assets\EmaceArt\Slavic World Free\URP_Support\URP Info.txt" />
     <None Include="Assets\EmaceArt\Slavic World Free\Thanks and checkout this\Info.txt" />
@@ -679,6 +682,9 @@
     <Reference Include="Unity.RenderPipelines.Universal.Runtime">
       <HintPath>C:\Users\admin\OneDrive\Documents\GitHub\Game-Assignment-2\Group Project 2\Library\ScriptAssemblies\Unity.RenderPipelines.Universal.Runtime.dll</HintPath>
     </Reference>
+    <Reference Include="Unity.AI.Navigation">
+      <HintPath>C:\Users\admin\OneDrive\Documents\GitHub\Game-Assignment-2\Group Project 2\Library\ScriptAssemblies\Unity.AI.Navigation.dll</HintPath>
+    </Reference>
     <Reference Include="Unity.Burst.Editor">
       <HintPath>C:\Users\admin\OneDrive\Documents\GitHub\Game-Assignment-2\Group Project 2\Library\ScriptAssemblies\Unity.Burst.Editor.dll</HintPath>
     </Reference>
@@ -745,6 +751,9 @@
     <Reference Include="Unity.PlasticSCM.Editor">
       <HintPath>C:\Users\admin\OneDrive\Documents\GitHub\Game-Assignment-2\Group Project 2\Library\ScriptAssemblies\Unity.PlasticSCM.Editor.dll</HintPath>
     </Reference>
+    <Reference Include="Unity.AI.Navigation.Updater">
+      <HintPath>C:\Users\admin\OneDrive\Documents\GitHub\Game-Assignment-2\Group Project 2\Library\ScriptAssemblies\Unity.AI.Navigation.Updater.dll</HintPath>
+    </Reference>
     <Reference Include="Unity.VisualScripting.State.Editor">
       <HintPath>C:\Users\admin\OneDrive\Documents\GitHub\Game-Assignment-2\Group Project 2\Library\ScriptAssemblies\Unity.VisualScripting.State.Editor.dll</HintPath>
     </Reference>
@@ -766,11 +775,17 @@
     <Reference Include="Unity.RenderPipelines.Universal.Shaders">
       <HintPath>C:\Users\admin\OneDrive\Documents\GitHub\Game-Assignment-2\Group Project 2\Library\ScriptAssemblies\Unity.RenderPipelines.Universal.Shaders.dll</HintPath>
     </Reference>
+    <Reference Include="Unity.AI.Navigation.Editor">
+      <HintPath>C:\Users\admin\OneDrive\Documents\GitHub\Game-Assignment-2\Group Project 2\Library\ScriptAssemblies\Unity.AI.Navigation.Editor.dll</HintPath>
+    </Reference>
     <Reference Include="Unity.VisualScripting.State">
       <HintPath>C:\Users\admin\OneDrive\Documents\GitHub\Game-Assignment-2\Group Project 2\Library\ScriptAssemblies\Unity.VisualScripting.State.dll</HintPath>
     </Reference>
     <Reference Include="Unity.VSCode.Editor">
       <HintPath>C:\Users\admin\OneDrive\Documents\GitHub\Game-Assignment-2\Group Project 2\Library\ScriptAssemblies\Unity.VSCode.Editor.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.AI.Navigation.Editor.ConversionSystem">
+      <HintPath>C:\Users\admin\OneDrive\Documents\GitHub\Game-Assignment-2\Group Project 2\Library\ScriptAssemblies\Unity.AI.Navigation.Editor.ConversionSystem.dll</HintPath>
     </Reference>
     <Reference Include="Unity.RenderPipelines.Universal.Editor">
       <HintPath>C:\Users\admin\OneDrive\Documents\GitHub\Game-Assignment-2\Group Project 2\Library\ScriptAssemblies\Unity.RenderPipelines.Universal.Editor.dll</HintPath>
