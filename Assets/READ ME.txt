@@ -1,39 +1,39 @@
 Requirements:
 
-- Do GDD
+- (Ghady) Do GDD
 
-- Add Enemies and their navmesh and movement and states with their AI and states
+- (Imad) Add Enemies and their navmesh and movement and states with their AI and states
 
-- Fix their scriptable objects accordingly
+- (Any) Fix their scriptable objects accordingly
 
-- Add collectables
+- (Ghady) Add collectables
 
-- Add Arrows pointing downwards to the collectables as children of collectables
+- (Ghady) Add Arrows pointing downwards to the collectables as children of collectables
 
-- Add scripts for collectables
+- (Ghady) Add scripts for collectables
 
-- Add Skins for collectables (metal rod, Energy Core, Gears, Glue/Screws, Something Alien Looking (should be closest to the Fracture))
+- (Imad) Add Skins for collectables (metal rod, Energy Core, Gears, Glue/Screws, Something Alien Looking (should be closest to the Fracture))
 
-- Get Animations for everything (Player, Enemies (both soldiers and melee aliens), collectables, rift)
+- (Imad) Get Animations for everything (Player, Enemies (both soldiers and melee aliens), collectables, rift)
 
-- Blend animations together and finish it up
+- (Imad) Blend animations together and finish it up
 
-- sound design (background music, sound effects)
+- (Jawad) sound design (background music, sound effects)
 
-- create our own sound effect (a scream when we get hurt)
+- (Ghady) create our own sound effect (a scream when we get hurt)
 
-- singleton pattern for background music
+- (Jawad) singleton pattern for background music
 
-- Do Object Pooling for enemies (melee aliens) and soldier's bullets
+- (Ghady) Do Object Pooling for enemies (melee aliens) and soldier's bullets
 
-- Add a hud which includes ammo, health, number of collectables
+- (Jawad) Add a hud which includes ammo, health, number of collectables
 
-- implement design pattern other than singleton
+- (Jawad) implement design pattern other than singleton
 
-- Save and Exit menu
+- (Imad) Save and Exit menu
 
-- In menu we should have a bar for volume of sound effects and background music separately
+- (Jawad) In menu we should have a bar for volume of sound effects and background music separately
 
-- Publish on Itch.io
+- (Imad) Publish on Itch.io
 
-
+- (Ghady) Post Processing Script
