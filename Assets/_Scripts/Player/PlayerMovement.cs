@@ -37,7 +37,12 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 lastWallNormal;         // normal of last wall we can jump from
     private float wallControlLockTimer;     // timer after wall jump where control is reduced
     private Camera cam;                     // to move relative to camera
+    public Animator anim;
 
+    [Header("Camera Movement")]
+    public float mouseSensitivity;
+    private float yRotation = 0f;
+   
     void Awake()
     {
         controller = GetComponent<CharacterController>();
@@ -49,6 +54,19 @@ public class PlayerMovement : MonoBehaviour
         // --- INPUT ---
         float inputX = Input.GetAxisRaw("Horizontal");
         float inputZ = Input.GetAxisRaw("Vertical");
+        if (inputZ != 0 || inputX != 0)
+        {
+            anim.SetBool("isRunning", true);
+        }
+        else
+        {
+            anim.SetBool("isRunning", false);
+        }
+        float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
+
+        yRotation += mouseX;
+        transform.localRotation = Quaternion.Euler(0f, yRotation, 0f);
+
 
         // Move relative to camera forward/right (flat on XZ plane)
         Vector3 camForward = cam.transform.forward;
@@ -85,6 +103,7 @@ public class PlayerMovement : MonoBehaviour
         {
             AirMove(wishDir);
         }
+        anim.SetBool("isGrounded", grounded);
 
         // Handle jump after movement code so we can jump from ground or wall
         HandleJump(grounded,hasJumped);
@@ -103,7 +122,6 @@ public class PlayerMovement : MonoBehaviour
     void GroundMove(Vector3 wishDir)
     {
         ApplyFriction(groundFriction);
-
         Accelerate(wishDir, groundAcceleration, maxGroundSpeed);
     }
 
@@ -162,6 +180,7 @@ public class PlayerMovement : MonoBehaviour
             // consume the buffer
             jumpBufferCounter = 0f;
             hasJumped = false;
+            anim.SetTrigger("Jump");
             return;
         }
 
