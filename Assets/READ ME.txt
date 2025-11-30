@@ -6,11 +6,19 @@ Requirements:
 
 - (Any) Fix their scriptable objects accordingly
 
-- (Ghady) Add collectables
+- (Ghady) Add collectables /done
 
-- (Ghady) Add Arrows pointing downwards to the collectables as children of collectables
+- (Ghady) Add Arrows pointing downwards to the collectables as children of collectables /done
 
-- (Ghady) Add scripts for collectables
+- (Ghady) Add scripts for collectables /done 
+
+- (Ghady) Add Rift/portal from asset store
+
+- (Ghady) finish riftcloser script 
+
+- (Ghady) Add Gun
+
+- (Ghady) do health script
 
 - (Imad) Add Skins for collectables (metal rod, Energy Core, Gears, Glue/Screws, Something Alien Looking (should be closest to the Fracture))
 

@@ -5,6 +5,10 @@ TagManager:
   serializedVersion: 2
   tags:
   - Bushes
+  - Bullet
+  - Collectable
+  - RiftCloser
+  - WorkBench
   layers:
   - Default
   - TransparentFX
