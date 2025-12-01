@@ -14,7 +14,7 @@ public class RiftCloser : MonoBehaviour
         arrow2.SetActive(true);
     }
 
-    private void onTriggerEnter(Collider other)
+    private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.CompareTag("Rift"))
         {
