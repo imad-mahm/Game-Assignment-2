@@ -6,6 +6,7 @@ public class ToolManager : MonoBehaviour
 {
     [SerializeField] private GameObject gun;
     [SerializeField] private GameObject riftCloser;
+    [SerializeField] private Collecting collectingscript;
     // Start is called before the first frame update
     void Start()
     {
@@ -16,13 +17,16 @@ public class ToolManager : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Alpha1))
+        if (collectingscript.crafted)
         {
-            riftCloser.SetActive(true);
-            gun.SetActive(false);
+            if (Input.GetKeyDown(KeyCode.Alpha2))
+            {
+                riftCloser.SetActive(true);
+                gun.SetActive(false);
+            }
         }
 
-        if (Input.GetKeyDown(KeyCode.Alpha2))
+        if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             riftCloser.SetActive(false);
             gun.SetActive(true);

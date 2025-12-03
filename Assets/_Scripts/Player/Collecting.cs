@@ -10,6 +10,7 @@ public class Collecting : MonoBehaviour
    [SerializeField] private GameObject arrow2;
    [SerializeField] private AudioSource audioSource;
    [SerializeField] private AudioClip audioClip;
+   public bool crafted = false;
    
    
    private float collected=0f;
@@ -37,7 +38,10 @@ public class Collecting : MonoBehaviour
       {
          Debug.Log("Press E");
          if (Input.GetKey(KeyCode.E))
+         {
             weapon.SetActive(true);
+            crafted = true;
+         }
       }
    }
 }
