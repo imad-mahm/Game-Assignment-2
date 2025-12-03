@@ -6,37 +6,37 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
     [Header("Ground movement")]
-    public float maxGroundSpeed = 7f;       // top speed when on ground
-    public float groundAcceleration = 60f;  // how fast you reach that speed
-    public float groundFriction = 8f;       // how quickly you slow down when not pressing input
+    public float maxGroundSpeed = 7f;    
+    public float groundAcceleration = 60f;  
+    public float groundFriction = 8f;       
 
     [Header("Air movement")]
-    public float maxAirSpeed = 8f;          // max horizontal speed in air
-    public float airAcceleration = 30f;     // how fast you can change horizontal speed in air
+    public float maxAirSpeed = 8f;      
+    public float airAcceleration = 30f;  
     [Range(0f, 1f)]
-    public float airControl = 0.6f;         // how much control you have mid-air (0 = none, 1 = full)
+    public float airControl = 0.6f;      
 
     [Header("Jumping")]
-    public float jumpHeight = 1.4f;         // world units to reach at jump apex
-    public float gravity = -25f;            // negative value, stronger = snappier jump
-    public float coyoteTime = 0.1f;         // time after leaving ground you can still jump
+    public float jumpHeight = 1.4f;      
+    public float gravity = -25f;       
+    public float coyoteTime = 0.1f;   
 
     [Header("Wall jumping")]
-    public float wallCheckDistance = 0.6f;  // how far from the player we search for walls
-    public LayerMask wallMask;              // which layers count as walls
-    public float wallJumpUpForce = 8f;      // vertical part of the wall jump
-    public float wallJumpAwayForce = 7f;    // push away from wall
-    public float wallJumpControlLockTime = 0.15f; // short time after wall jump where input is weaker
+    public float wallCheckDistance = 0.6f;  
+    public LayerMask wallMask;            
+    public float wallJumpUpForce = 8f;   
+    public float wallJumpAwayForce = 7f;   
+    public float wallJumpControlLockTime = 0.15f;
 
     private CharacterController controller;
-    private Vector3 velocity;               // full velocity (x,z,y)
-    private float lastGroundedTime;         // for coyote time
+    private Vector3 velocity;       
+    private float lastGroundedTime;   
     [SerializeField] private float jumpBufferTime;
     private bool hasJumped;
-    private float jumpBufferCounter = 0f;                // jump pressed this frame
-    private Vector3 lastWallNormal;         // normal of last wall we can jump from
-    private float wallControlLockTimer;     // timer after wall jump where control is reduced
-    private Camera cam;                     // to move relative to camera
+    private float jumpBufferCounter = 0f;       
+    private Vector3 lastWallNormal;  
+    private float wallControlLockTimer;    
+    private Camera cam;  
     public Animator anim;
 
     [Header("Camera Movement")]
@@ -51,7 +51,6 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        // --- INPUT ---
         float inputX = Input.GetAxisRaw("Horizontal");
         float inputZ = Input.GetAxisRaw("Vertical");
         if (inputZ != 0 || inputX != 0)
@@ -67,8 +66,7 @@ public class PlayerMovement : MonoBehaviour
         yRotation += mouseX;
         transform.localRotation = Quaternion.Euler(0f, yRotation, 0f);
 
-
-        // Move relative to camera forward/right (flat on XZ plane)
+        
         Vector3 camForward = cam.transform.forward;
         camForward.y = 0f;
         camForward.Normalize();
@@ -95,7 +93,6 @@ public class PlayerMovement : MonoBehaviour
             lastGroundedTime = Time.time;
             GroundMove(wishDir);
 
-            // reset vertical velocity so we stick to ground
             if (velocity.y < 0f)
                 velocity.y = -2f;
         }
@@ -104,17 +101,13 @@ public class PlayerMovement : MonoBehaviour
             AirMove(wishDir);
         }
         anim.SetBool("isGrounded", grounded);
-
-        // Handle jump after movement code so we can jump from ground or wall
+        
         HandleJump(grounded,hasJumped);
-
-        // Apply gravity (always)
+        
         velocity.y += gravity * Time.deltaTime;
-
-        // Move character
+        
         controller.Move(velocity * Time.deltaTime);
-
-        // Update timers
+        
         if (wallControlLockTimer > 0f)
             wallControlLockTimer -= Time.deltaTime;
     }
@@ -127,9 +120,8 @@ public class PlayerMovement : MonoBehaviour
 
     void AirMove(Vector3 wishDir)
     {
-        // reduce input while control is locked after a wall jump
         if (wallControlLockTimer > 0f)
-            wishDir *= 0.3f; // weaker control right after wall jump
+            wishDir *= 0.3f; 
         else
             wishDir *= airControl;
 
@@ -167,59 +159,47 @@ public class PlayerMovement : MonoBehaviour
 
     void HandleJump(bool grounded, bool jump)
     {
-        // If we have no buffered jump, do nothing
         if (jumpBufferCounter <= 0f)
             return;
 
-        // 1) Ground / coyote jump
         if (grounded || Time.time - lastGroundedTime <= coyoteTime)
         {
             float jumpVel = Mathf.Sqrt(-2f * gravity * jumpHeight);
             velocity.y = jumpVel;
 
-            // consume the buffer
             jumpBufferCounter = 0f;
             hasJumped = false;
             anim.SetTrigger("Jump");
             return;
         }
 
-        // 2) Wall jump if we have a valid wall and we're in the air
         Vector3 wallNormal;
         if (CanWallJump(out wallNormal))
         {
-            // Remove current vertical velocity to make jump consistent
             if (velocity.y < 0f) velocity.y = 0f;
 
-            // OPTIONAL: damp horizontal velocity into the wall so we don't stack speed
             Vector3 horizVel = new Vector3(velocity.x, 0f, velocity.z);
-            Vector3 tangential = Vector3.ProjectOnPlane(horizVel, wallNormal); // keep along-wall speed, kill into-wall
-
-            // Build wall jump impulse
+            Vector3 tangential = Vector3.ProjectOnPlane(horizVel, wallNormal); 
+            
             Vector3 jumpDir = Vector3.up * wallJumpUpForce + wallNormal * wallJumpAwayForce;
-
-            // Set new velocity instead of infinitely adding to it
+            
             velocity = tangential + jumpDir;
 
             wallControlLockTimer = wallJumpControlLockTime;
-
-            // consume the buffer
+            
             jumpBufferCounter = 0f;
             hasJumped = false;
             return;
         }
-
-        // if we reach here, we didn't jump this frame; buffer will keep ticking down in Update
     }
 
 
     bool CanWallJump(out Vector3 wallNormal)
     {
         wallNormal = Vector3.zero;
-
-        // Sphere cast to find nearby walls
+        
         Vector3 origin = transform.position;
-        origin.y += controller.height * 0.5f; // cast from middle
+        origin.y += controller.height * 0.5f;
 
         if (Physics.SphereCast(origin, controller.radius * 0.9f,
                                transform.forward, out RaycastHit hit,
@@ -228,8 +208,7 @@ public class PlayerMovement : MonoBehaviour
             wallNormal = hit.normal;
             return true;
         }
-
-        // Also check left and right for better coverage
+        
         if (Physics.SphereCast(origin, controller.radius * 0.9f,
                                transform.right, out hit,
                                wallCheckDistance, wallMask, QueryTriggerInteraction.Ignore))
@@ -248,6 +227,4 @@ public class PlayerMovement : MonoBehaviour
 
         return false;
     }
-
-    
 }

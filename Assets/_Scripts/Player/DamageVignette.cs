@@ -6,6 +6,8 @@ public class DamageVignette : MonoBehaviour
 {
     public Volume postProcessVolume;
     private Vignette vignette;
+    [SerializeField] private PlayerStats stats;
+    private float lastrecordedhealth;
 
     [Header("Damage Vignette Settings")]
     public Color damageColor = Color.red;
@@ -18,36 +20,45 @@ public class DamageVignette : MonoBehaviour
     [Header("Additional Damage Sounds")]
     public AudioSource audioSource;
     public AudioClip[] audioClips;
+    
+    
+    //observer pattern
+    private void OnEnable()
+    {
+        PlayerStats.OnHealthChanged += OnPlayerDamaged;
+    }
+
+    private void OnDisable()
+    {
+        PlayerStats.OnHealthChanged -= OnPlayerDamaged;
+    }
+
 
     void Start()
     {
-        // get vignette from volume
         postProcessVolume.profile.TryGet(out vignette);
 
         defaultColor = vignette.color.value;
         defaultIntensity = vignette.intensity.value;
-        
-        //TODO: Get the sounds of damage we're gonna make and add them here
+        lastrecordedhealth = stats.getPlayerHealth();
+
     }
 
     void Update()
     {
-        // smoothly return to normal
         vignette.intensity.value = Mathf.Lerp(vignette.intensity.value, defaultIntensity, Time.deltaTime * recoverSpeed);
         vignette.color.value = Color.Lerp(vignette.color.value, defaultColor, Time.deltaTime * recoverSpeed);
-
-        if (Input.GetKeyDown(KeyCode.J))
-        {
-            TakeDamageEffect();
-        }
+    }
+    
+    private void OnPlayerDamaged(float newHealth)
+    {
+        TakeDamageEffect();
     }
 
-    public void TakeDamageEffect()
+    private void TakeDamageEffect()
     {
-        // instantly flash stronger + red
         vignette.intensity.value = damageIntensity;
         vignette.color.value = damageColor;
-        // play a random sound from clips at random pitches and volumes
         AudioClip audioClip = audioClips[Random.Range(0, audioClips.Length)];
         audioSource.pitch = Random.Range(0.5f, 2f);
 		audioSource.volume = Random.Range(0.5f, 100f);

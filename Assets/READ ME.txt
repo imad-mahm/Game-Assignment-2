@@ -49,3 +49,7 @@ Requirements:
 - (Imad) Publish on Itch.io
 
 - (Ghady) Post Processing Script
+
+
+
+- Sounds: player gets hurt, gun shooting, bullet hitting enemy, enemy switches to chase, got collectable, closed portal.

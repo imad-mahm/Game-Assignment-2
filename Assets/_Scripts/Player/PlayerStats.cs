@@ -5,13 +5,20 @@ using UnityEngine;
 
 public class PlayerStats : MonoBehaviour
 {
-    private float maxHealth;
+    [SerializeField] private float maxHealth;
     private float currentHealth;
+    public static System.Action<float> OnHealthChanged;
+    [SerializeField] private float TimeToRegen;
+    private float regentimer;
+    private bool low;
+
+    public float getPlayerHealth()
+    {
+        return currentHealth;
+    }
     
     
-    
-    
-    void Start()
+    void Awake()
     {
         currentHealth = maxHealth;
     }
@@ -19,7 +26,12 @@ public class PlayerStats : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //add the health regen part
+        regentimer += Time.deltaTime;
+
+        if (regentimer >= TimeToRegen && low)
+        {
+            Regenerate();
+        }
     }
 
 
@@ -27,7 +39,32 @@ public class PlayerStats : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Bullet"))
         {
-            //get bullet damage value and remove it from hp
+            low = true;
+            regentimer = 0;
+            TakeDamage(0f );//change to damage number
         }
+    }
+    
+    public void TakeDamage(float amount)
+    {
+        currentHealth -= amount;
+        OnHealthChanged?.Invoke(currentHealth);
+    }
+
+    private void Regenerate()
+    {
+        currentHealth += 8;
+        if (currentHealth > maxHealth)
+        {
+            currentHealth = maxHealth;
+            low=false;
+            return;
+        }
+        StartCoroutine(wait1());
+    }
+
+    private IEnumerator wait1()
+    {
+        yield return new WaitForSeconds(1f);
     }
 }
