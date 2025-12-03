@@ -105,6 +105,7 @@
     <None Include="Assets\EmaceArt\Slavic World Free\Plugin\Grass.shader" />
     <None Include="Assets\Animation_Textures\TextMesh Pro\Shaders\TMPro_Mobile.cginc" />
     <None Include="Assets\Animation_Textures\TextMesh Pro\Shaders\TMP_SDF SSD.shader" />
+    <None Include="Assets\Screw Heads Pack - Free\Documentation.txt" />
     <None Include="Assets\EmaceArt\Slavic World Free\URP_Support\URP Info.txt" />
     <None Include="Assets\Animation_Textures\TextMesh Pro\Shaders\TMP_SDF-Surface-Mobile.shader" />
     <None Include="Assets\Animation_Textures\TextMesh Pro\Shaders\TMP_SDF-Surface.shader" />

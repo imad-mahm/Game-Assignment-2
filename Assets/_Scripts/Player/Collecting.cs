@@ -8,6 +8,8 @@ public class Collecting : MonoBehaviour
    [SerializeField] private GameObject weapon;
    [SerializeField] private GameObject arrow1;
    [SerializeField] private GameObject arrow2;
+   [SerializeField] private AudioSource audioSource;
+   [SerializeField] private AudioClip audioClip;
    
    
    private float collected=0f;
@@ -16,6 +18,7 @@ public class Collecting : MonoBehaviour
       
       if (other.gameObject.CompareTag("Collectable"))
       {
+         audioSource.PlayOneShot(audioClip);
          collected+=1f;
          other.gameObject.SetActive(false);
       }

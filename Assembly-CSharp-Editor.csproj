@@ -45,7 +45,9 @@
     <Analyzer Include="C:\Program Files\Unity\Hub\Editor\2022.3.62f2\Editor\Data\Tools\Unity.SourceGenerators\Unity.Properties.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\TutorialInfo\Scripts\Editor\ReadmeEditor.cs" />
+    <Compile Include="Assets\GearFactory\Scripts\Editor\GearEditor.cs" />
+    <Compile Include="Assets\GearFactory\Scripts\Editor\GearCreatorEditor.cs" />
+    <Compile Include="Assets\GearFactory\Scripts\Editor\SlideGearsTogetherEditor.cs" />
     <Reference Include="UnityEngine">
       <HintPath>C:\Program Files\Unity\Hub\Editor\2022.3.62f2\Editor\Data\Managed\UnityEngine\UnityEngine.dll</HintPath>
     </Reference>
@@ -307,9 +309,6 @@
     <Reference Include="Unity.VisualScripting.YamlDotNet">
       <HintPath>C:\Users\admin\OneDrive\Documents\GitHub\Game-Assignment-2\Group Project 2\Library\PackageCache\com.unity.visualscripting@1.9.4\Editor\VisualScripting.Core\Dependencies\YamlDotNet\Unity.VisualScripting.YamlDotNet.dll</HintPath>
     </Reference>
-    <Reference Include="unityplastic">
-      <HintPath>C:\Users\admin\OneDrive\Documents\GitHub\Game-Assignment-2\Group Project 2\Library\PackageCache\com.unity.collab-proxy@2.10.2\Lib\Editor\unityplastic.dll</HintPath>
-    </Reference>
     <Reference Include="Unity.Plastic.Antlr3.Runtime">
       <HintPath>C:\Users\admin\OneDrive\Documents\GitHub\Game-Assignment-2\Group Project 2\Library\PackageCache\com.unity.collab-proxy@2.10.2\Lib\Editor\Unity.Plastic.Antlr3.Runtime.dll</HintPath>
     </Reference>
@@ -321,6 +320,9 @@
     </Reference>
     <Reference Include="Unity.VisualScripting.IonicZip">
       <HintPath>C:\Users\admin\OneDrive\Documents\GitHub\Game-Assignment-2\Group Project 2\Library\PackageCache\com.unity.visualscripting@1.9.4\Editor\VisualScripting.Core\Dependencies\DotNetZip\Unity.VisualScripting.IonicZip.dll</HintPath>
+    </Reference>
+    <Reference Include="unityplastic">
+      <HintPath>C:\Users\admin\OneDrive\Documents\GitHub\Game-Assignment-2\Group Project 2\Library\PackageCache\com.unity.collab-proxy@2.10.2\Lib\Editor\unityplastic.dll</HintPath>
     </Reference>
     <Reference Include="Unity.VisualScripting.Antlr3.Runtime">
       <HintPath>C:\Users\admin\OneDrive\Documents\GitHub\Game-Assignment-2\Group Project 2\Library\PackageCache\com.unity.visualscripting@1.9.4\Runtime\VisualScripting.Flow\Dependencies\NCalc\Unity.VisualScripting.Antlr3.Runtime.dll</HintPath>
@@ -721,6 +723,9 @@
     <Reference Include="Unity.RenderPipelines.Universal.Runtime">
       <HintPath>C:\Users\admin\OneDrive\Documents\GitHub\Game-Assignment-2\Group Project 2\Library\ScriptAssemblies\Unity.RenderPipelines.Universal.Runtime.dll</HintPath>
     </Reference>
+    <Reference Include="Unity.AI.Navigation">
+      <HintPath>C:\Users\admin\OneDrive\Documents\GitHub\Game-Assignment-2\Group Project 2\Library\ScriptAssemblies\Unity.AI.Navigation.dll</HintPath>
+    </Reference>
     <Reference Include="Unity.Burst.Editor">
       <HintPath>C:\Users\admin\OneDrive\Documents\GitHub\Game-Assignment-2\Group Project 2\Library\ScriptAssemblies\Unity.Burst.Editor.dll</HintPath>
     </Reference>
@@ -787,6 +792,9 @@
     <Reference Include="Unity.PlasticSCM.Editor">
       <HintPath>C:\Users\admin\OneDrive\Documents\GitHub\Game-Assignment-2\Group Project 2\Library\ScriptAssemblies\Unity.PlasticSCM.Editor.dll</HintPath>
     </Reference>
+    <Reference Include="Unity.AI.Navigation.Updater">
+      <HintPath>C:\Users\admin\OneDrive\Documents\GitHub\Game-Assignment-2\Group Project 2\Library\ScriptAssemblies\Unity.AI.Navigation.Updater.dll</HintPath>
+    </Reference>
     <Reference Include="Unity.VisualScripting.State.Editor">
       <HintPath>C:\Users\admin\OneDrive\Documents\GitHub\Game-Assignment-2\Group Project 2\Library\ScriptAssemblies\Unity.VisualScripting.State.Editor.dll</HintPath>
     </Reference>
@@ -808,8 +816,14 @@
     <Reference Include="Unity.RenderPipelines.Universal.Shaders">
       <HintPath>C:\Users\admin\OneDrive\Documents\GitHub\Game-Assignment-2\Group Project 2\Library\ScriptAssemblies\Unity.RenderPipelines.Universal.Shaders.dll</HintPath>
     </Reference>
+    <Reference Include="Unity.AI.Navigation.Editor">
+      <HintPath>C:\Users\admin\OneDrive\Documents\GitHub\Game-Assignment-2\Group Project 2\Library\ScriptAssemblies\Unity.AI.Navigation.Editor.dll</HintPath>
+    </Reference>
     <Reference Include="Unity.VisualScripting.State">
       <HintPath>C:\Users\admin\OneDrive\Documents\GitHub\Game-Assignment-2\Group Project 2\Library\ScriptAssemblies\Unity.VisualScripting.State.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.AI.Navigation.Editor.ConversionSystem">
+      <HintPath>C:\Users\admin\OneDrive\Documents\GitHub\Game-Assignment-2\Group Project 2\Library\ScriptAssemblies\Unity.AI.Navigation.Editor.ConversionSystem.dll</HintPath>
     </Reference>
     <Reference Include="Unity.VSCode.Editor">
       <HintPath>C:\Users\admin\OneDrive\Documents\GitHub\Game-Assignment-2\Group Project 2\Library\ScriptAssemblies\Unity.VSCode.Editor.dll</HintPath>
