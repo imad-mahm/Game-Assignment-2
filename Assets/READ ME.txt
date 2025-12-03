@@ -2,7 +2,9 @@ Requirements:
 
 - (Ghady) Do GDD
 
-- (Imad) Add Enemies and their navmesh and movement and states with their AI and states
+- (Imad) Add Enemies and their navmesh and movement
+
+- Add states for enemies with their AI and states
 
 - (Any) Fix their scriptable objects accordingly
 
@@ -16,7 +18,9 @@ Requirements:
 
 - (Ghady) finish riftcloser script 
 
-- (Ghady) Add Gun
+- Add gun object and shooting script
+
+- Add bullet prefab and bullet behavior 
 
 - (Ghady) do health script
 
@@ -32,7 +36,7 @@ Requirements:
 
 - (Jawad) singleton pattern for background music
 
-- (Ghady) Do Object Pooling for enemies (melee aliens) and soldier's bullets
+- (Ghady) Do Object Pooling for enemies (melee aliens) and soldier's bullets and your own bullets
 
 - (Jawad) Add a hud which includes ammo, health, number of collectables
 
