@@ -11,8 +11,9 @@ public class Collecting : MonoBehaviour
    
    
    private float collected=0f;
-   private void OnCollisionEnter(Collision other)
+   private void OnTriggerEnter(Collider other)
    {
+      
       if (other.gameObject.CompareTag("Collectable"))
       {
          collected+=1f;
@@ -24,9 +25,10 @@ public class Collecting : MonoBehaviour
          arrow1.SetActive(true);
          arrow2.SetActive(true);
       }
+      
    }
 
-   private void OnTriggerEnter(Collider other)
+   private void OnTriggerStay(Collider other)
    {
       if (other.gameObject.CompareTag("WorkBench") && collected == 5f)
       {
