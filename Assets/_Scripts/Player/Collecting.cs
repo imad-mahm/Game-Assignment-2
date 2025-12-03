@@ -33,7 +33,7 @@ public class Collecting : MonoBehaviour
       if (other.gameObject.CompareTag("WorkBench") && collected == 5f)
       {
          Debug.Log("Press E");
-         if (Input.GetKeyDown(KeyCode.E))
+         if (Input.GetKey(KeyCode.E))
             weapon.SetActive(true);
       }
    }

@@ -11,7 +11,6 @@ public class RiftCloser : MonoBehaviour
     
     private void Start()
     {
-        //rift arrows
         arrow1.SetActive(true);
         arrow2.SetActive(true);
     }
