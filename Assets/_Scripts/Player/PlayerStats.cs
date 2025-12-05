@@ -19,6 +19,7 @@ public class PlayerStats : MonoBehaviour
     void Update()
     {
         
+        
     }
 
     public void TakeDamage(float amount)

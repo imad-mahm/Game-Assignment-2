@@ -57,8 +57,9 @@ public class AudioManager : MonoBehaviour
     }
 
     public void PlayMenuMusic()
-    {
+    {   
         PlayMusic(menuMusic, true);
+        Debug.Log("Menu music");
     }
     public void PlayGameplayMusic()
     {
@@ -69,6 +70,7 @@ public class AudioManager : MonoBehaviour
         }
 
         PlayMusic(gameplayMusic, true);
+        Debug.Log("Gameplay music");
     }
 
     public void PlayMusic(AudioClip clip, bool loop = true)
