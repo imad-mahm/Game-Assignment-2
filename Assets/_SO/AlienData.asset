@@ -16,8 +16,9 @@ MonoBehaviour:
   health: 200
   walkSpeed: 5
   chaseSpeed: 10
+  searchingDelay: 5
   sightRange: 10
-  sightAngle: 100
+  sightAngle: 87
   attackRange: 3
   attackCooldown: 1.5
   projectilePrefab: {fileID: 0}

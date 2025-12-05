@@ -16,6 +16,7 @@ MonoBehaviour:
   health: 100
   walkSpeed: 4
   chaseSpeed: 9
+  searchingDelay: 3
   sightRange: 30
   sightAngle: 100
   attackRange: 15
