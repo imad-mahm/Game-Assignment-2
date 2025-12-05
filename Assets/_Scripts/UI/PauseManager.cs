@@ -1,36 +1,31 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PauseManager : MonoBehaviour
 {
     [Header("UI References")]
-    [SerializeField] private GameObject pauseMenuUI;
-    [SerializeField] private GameObject hudUI;
+    public GameObject pauseMenuUI;
+    public GameObject hudUI; 
 
-    public bool IsPaused { get; private set; } = false;
-
-    private MenuManager menuManager;
-
-    private void Awake()
-    {
-        menuManager = FindObjectOfType<MenuManager>();
-    }
+    private bool isPaused = false;
 
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            if (IsPaused) ResumeGame();
+            if (isPaused) ResumeGame();
             else PauseGame();
         }
     }
 
     public void PauseGame()
     {
-        if (pauseMenuUI != null) pauseMenuUI.SetActive(true);
-        if (hudUI != null) hudUI.SetActive(false);
+        Debug.Log("PAUSE GAME CALLED");
+        pauseMenuUI.SetActive(true);
+        hudUI.SetActive(false);
 
         Time.timeScale = 0f;
-        IsPaused = true;
+        isPaused = true;
 
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
@@ -38,54 +33,30 @@ public class PauseManager : MonoBehaviour
 
     public void ResumeGame()
     {
-        if (pauseMenuUI != null) pauseMenuUI.SetActive(false);
-        if (hudUI != null) hudUI.SetActive(true);
+        pauseMenuUI.SetActive(false);
+        hudUI.SetActive(true);
 
         Time.timeScale = 1f;
-        IsPaused = false;
+        isPaused = false;
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
 
-    public void OpenSettings()
-    {
-        if (pauseMenuUI != null) pauseMenuUI.SetActive(false);
-
-        if (menuManager != null)
-        {
-            menuManager.ShowSettingsFromPause();
-        }
-        else
-        {
-            Debug.LogWarning("PauseManager: MenuManager not found in scene.");
-        }
-    }
-    public void ShowPauseMenu()
-    {
-        if (pauseMenuUI != null) pauseMenuUI.SetActive(true);
-    }
-
     public void QuitToMainMenu()
     {
         Time.timeScale = 1f;
-        IsPaused = false;
+        isPaused = false;
 
-        if (pauseMenuUI != null) pauseMenuUI.SetActive(false);
-        if (hudUI != null) hudUI.SetActive(false);
+        pauseMenuUI.SetActive(false);
+        hudUI.SetActive(false);
 
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
-        
-        AudioManager.Instance.PlayMenuMusic();
 
-        if (menuManager != null)
-        {
-            menuManager.ShowMainMenuFromGame();
-        }
-        else
-        {
-            Debug.LogWarning("PauseManager: MenuManager not found when trying to QuitToMainMenu.");
-        }
+        if (AudioManager.Instance != null)
+            AudioManager.Instance.PlayMenuMusic();
+
+        SceneManager.LoadScene("Main Menu");
     }
 }
