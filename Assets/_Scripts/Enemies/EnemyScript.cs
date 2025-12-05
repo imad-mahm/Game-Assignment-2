@@ -9,7 +9,7 @@ namespace _Scripts.Enemies
     public class EnemyScript : MonoBehaviour
     {
         [SerializeField] private EnemyData enemySO;
-
+        [SerializeField] private float scanDelay;
         private enum States
         {
             Patrol,
@@ -18,11 +18,11 @@ namespace _Scripts.Enemies
             Scan
         }
     
-        private States currState = States.Patrol;
-
+        [SerializeField] private States currState = States.Patrol;
+        private float baseY;
 
         private NavMeshAgent _agent;
-        private Animator _anim;
+        // private Animator _anim;
         private AudioSource _audioSource;
         private Transform _player;
         [CanBeNull] public Transform projectileSpawn;
@@ -33,17 +33,14 @@ namespace _Scripts.Enemies
         private int _currentPatrolIndex;
         
         private bool _alreadyAttacked;
-
-        public float scanSpeed;   // degrees per second
-        public float scanAngle;   // max angle left/right
-        private float baseY;
         
         void Awake()
         { 
             _player = GameObject.FindGameObjectWithTag("Player").transform;
             _agent = GetComponent<NavMeshAgent>();
             _audioSource = GetComponent<AudioSource>();
-            _anim = GetComponent<Animator>();
+            // _anim = GetComponent<Animator>();
+            baseY = transform.eulerAngles.y;
         }
 
         // Start is called before the first frame update
@@ -56,18 +53,6 @@ namespace _Scripts.Enemies
                 enabled = false;
                 return;
             }
-
-            if (enemySO.enemyType == EnemyType.MeleeCombatant)
-            {
-                scanSpeed = 30f;
-                scanAngle = 90f;
-            }
-            else if (enemySO.enemyType == EnemyType.Shooter)
-            {
-                scanSpeed = 15f;
-                scanAngle = 50f;
-            }
-            baseY = transform.eulerAngles.y;
             
             _agent.speed = enemySO.walkSpeed;
         
@@ -86,7 +71,7 @@ namespace _Scripts.Enemies
         // Update is called once per frame
         private void Update()
         {
-            float angle = Mathf.Sin(Time.time * scanSpeed * Mathf.Deg2Rad) * scanAngle;
+            float angle = Mathf.Sin(Time.time * enemySO.scanSpeed * Mathf.Deg2Rad) * enemySO.scanAngle;
             transform.rotation = Quaternion.Euler(0, baseY + angle, 0);
             
             PlayerInSight();
@@ -128,13 +113,23 @@ namespace _Scripts.Enemies
                     else if (!PlayerInSight())
                     {
                         currState = States.Scan;
-                        Thread.Sleep((int)(enemySO.searchingDelay * 1000));
-                        currState = States.Patrol;
+                        scanDelay = 0;
                     }
 
                     break;
                 case States.Scan:
-                    Scan();
+                    if (scanDelay == 0)
+                    {
+                        Scan();
+                    }
+                    else if (scanDelay < enemySO.searchingDelay)
+                    {
+                        scanDelay += Time.deltaTime;
+                    }
+                    else
+                    {
+                        currState = States.Patrol;
+                    }
                     if (PlayerInSight())
                     {
                         currState = States.Attack;
@@ -181,7 +176,7 @@ namespace _Scripts.Enemies
             }
 
             _agent.speed = enemySO.walkSpeed;
-            _anim.SetFloat("Speed", 0.5f, 0.1f, Time.deltaTime);
+            // _anim.SetFloat("Speed", 0.5f, 0.1f, Time.deltaTime);
 
             var targetPoint = _patrolPoints[_currentPatrolIndex];
             _agent.SetDestination(targetPoint.position);
@@ -225,7 +220,7 @@ namespace _Scripts.Enemies
             _agent.speed = enemySO.chaseSpeed;
             _agent.SetDestination(_player.position);
 
-            _anim.SetFloat("Speed", 1, 0.1f, Time.deltaTime);
+            // _anim.SetFloat("Speed", 1, 0.1f, Time.deltaTime);
 
             var direction = (_player.position - transform.position).normalized;
             direction.y = 0;
@@ -244,7 +239,7 @@ namespace _Scripts.Enemies
             _agent.SetDestination(transform.position);
             transform.LookAt(_player);
         
-            _anim.SetTrigger("Attack");
+            // _anim.SetTrigger("Attack");
 
             if (!_alreadyAttacked)
             {
@@ -315,7 +310,7 @@ namespace _Scripts.Enemies
             if (enemySO.enemyType == EnemyType.MeleeCombatant)
             {
                 // rotate left and right slowly
-                float angle = Mathf.Sin(Time.time * scanSpeed * Mathf.Deg2Rad) * scanAngle;
+                float angle = Mathf.Sin(Time.time * enemySO.scanSpeed * Mathf.Deg2Rad) * enemySO.scanAngle;
                 transform.rotation = Quaternion.Euler(0, baseY + angle, 0);
             }
         }

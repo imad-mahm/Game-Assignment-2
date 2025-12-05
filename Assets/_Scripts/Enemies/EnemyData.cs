@@ -12,6 +12,8 @@ public class EnemyData : ScriptableObject
     public float walkSpeed;
     public float chaseSpeed;
     public float searchingDelay;
+    public float scanSpeed;   // degrees per second
+    public float scanAngle;   // max angle left/right
 
     [Space(5), Header("Detection")] 
     public float sightRange;
@@ -31,3 +33,4 @@ public enum EnemyType
     MeleeCombatant,
     Shooter
 }
+

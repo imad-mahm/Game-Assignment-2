@@ -51,7 +51,6 @@
     <Compile Include="Assets\Animation_Textures\TextMesh Pro\Examples &amp; Extras\Scripts\VertexJitter.cs" />
     <Compile Include="Assets\Animation_Textures\TextMesh Pro\Examples &amp; Extras\Scripts\WarpTextExample.cs" />
     <Compile Include="Assets\Animation_Textures\TextMesh Pro\Examples &amp; Extras\Scripts\TextMeshSpawner.cs" />
-    <Compile Include="Assets\_Scripts\Misc\SaveSystem.cs" />
     <Compile Include="Assets\_Scripts\Player\Collecting.cs" />
     <Compile Include="Assets\Animation_Textures\TextMesh Pro\Examples &amp; Extras\Scripts\DropdownSample.cs" />
     <Compile Include="Assets\Animation_Textures\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark01_UGUI.cs" />
@@ -85,7 +84,6 @@
     <Compile Include="Assets\Animation_Textures\TextMesh Pro\Examples &amp; Extras\Scripts\ObjectSpin.cs" />
     <Compile Include="Assets\Animation_Textures\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_PhoneNumberValidator.cs" />
     <Compile Include="Assets\_Scripts\Player\PlayerMovement.cs" />
-    <Compile Include="Assets\_Scripts\Misc\PlayerSave.cs" />
     <Compile Include="Assets\Animation_Textures\TextMesh Pro\Examples &amp; Extras\Scripts\ChatController.cs" />
     <Compile Include="Assets\_Scripts\Enemies\EnemyScript.cs" />
     <Compile Include="Assets\Animation_Textures\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_ExampleScript_01.cs" />

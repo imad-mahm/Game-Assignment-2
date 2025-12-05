@@ -16,6 +16,7 @@ public class ObjectPooler : MonoBehaviour
 
     public static Dictionary<string, Queue<GameObject>> PoolDictionary;
     public List<Pool> pools;
+    public static ObjectPooler Instance;
 
     private void Start()
     {
@@ -63,8 +64,21 @@ public class ObjectPooler : MonoBehaviour
         return objectToSpawn;
     }
 
-    public static void ReleaseFromPool(GameObject objectToRelease, int poolIndex)
+    public static void ReleaseFromPool(GameObject obj, float delay = 0f)
     {
-        objectToRelease.SetActive(false);
+        if (delay <= 0)
+        {
+            obj.SetActive(false);
+        }
+        else
+        {
+            Instance.StartCoroutine(Instance.ReleaseAfterDelay(obj, delay));
+        }
+    }
+    
+    private IEnumerator ReleaseAfterDelay(GameObject obj, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        obj.SetActive(false);
     }
 }

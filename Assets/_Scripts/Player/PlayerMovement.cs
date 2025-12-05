@@ -67,16 +67,8 @@ public class PlayerMovement : MonoBehaviour
         yRotation += mouseX;
         transform.localRotation = Quaternion.Euler(0f, yRotation, 0f);
 
-
-        // Move relative to camera forward/right (flat on XZ plane)
-        Vector3 camForward = cam.transform.forward;
-        camForward.y = 0f;
-        camForward.Normalize();
-        Vector3 camRight = cam.transform.right;
-        camRight.y = 0f;
-        camRight.Normalize();
-
-        Vector3 wishDir = (camRight * inputX + camForward * inputZ).normalized;
+        
+        Vector3 wishDir = (transform.right * inputX + transform.forward * inputZ).normalized;
 
         if (Input.GetButtonDown("Jump"))
         {
