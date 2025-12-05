@@ -40,7 +40,7 @@ public class DamageVignette : MonoBehaviour
 
         defaultColor = vignette.color.value;
         defaultIntensity = vignette.intensity.value;
-        lastrecordedhealth = stats.getPlayerHealth();
+        lastrecordedhealth = stats.currentHealth;
 
     }
 

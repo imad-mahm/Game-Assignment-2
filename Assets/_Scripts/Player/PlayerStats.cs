@@ -8,7 +8,7 @@ public class PlayerStats : MonoBehaviour
     [SerializeField] public float maxHealth = 100f;
     public float currentHealth;
 
-    public event System.Action<float> OnHealthChanged;
+    public static event System.Action<float> OnHealthChanged;
 
     void Start()
     {

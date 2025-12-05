@@ -7,7 +7,7 @@ public class HUD_Manager : MonoBehaviour
 
     private void Start()
     {
-        playerStats.OnHealthChanged += UpdateHealthBar;
+        UpdateHealthBar(playerStats.currentHealth);
     }
 
     private void UpdateHealthBar(float value)
