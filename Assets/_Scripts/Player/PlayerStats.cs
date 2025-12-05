@@ -5,66 +5,45 @@ using UnityEngine;
 
 public class PlayerStats : MonoBehaviour
 {
-    [SerializeField] private float maxHealth;
-    private float currentHealth;
-    public static System.Action<float> OnHealthChanged;
-    [SerializeField] private float TimeToRegen;
-    private float regentimer;
-    private bool low;
+    [SerializeField] public float maxHealth = 100f;
+    public float currentHealth;
 
-    public float getPlayerHealth()
-    {
-        return currentHealth;
-    }
-    
-    
-    void Awake()
+    public event System.Action<float> OnHealthChanged;
+
+    void Start()
     {
         currentHealth = maxHealth;
+        NotifyHealthChanged();
     }
 
-    // Update is called once per frame
     void Update()
     {
-        regentimer += Time.deltaTime;
-
-        if (regentimer >= TimeToRegen && low)
-        {
-            Regenerate();
-        }
+        
     }
 
+    public void TakeDamage(float amount)
+    {
+        currentHealth = Mathf.Clamp(currentHealth - amount, 0f, maxHealth);
+        NotifyHealthChanged();
+    }
+
+    public void Heal(float amount)
+    {
+        currentHealth = Mathf.Clamp(currentHealth + amount, 0f, maxHealth);
+        NotifyHealthChanged();
+    }
+
+    private void NotifyHealthChanged()
+    {
+        float normalized = currentHealth / maxHealth; // 0 to 1
+        OnHealthChanged?.Invoke(normalized);
+    }
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.CompareTag("Bullet"))
         {
-            low = true;
-            regentimer = 0;
-            TakeDamage(0f );//change to damage number
+            //get bullet damage value and remove it from hp
         }
-    }
-    
-    public void TakeDamage(float amount)
-    {
-        currentHealth -= amount;
-        OnHealthChanged?.Invoke(currentHealth);
-    }
-
-    private void Regenerate()
-    {
-        currentHealth += 8;
-        if (currentHealth > maxHealth)
-        {
-            currentHealth = maxHealth;
-            low=false;
-            return;
-        }
-        StartCoroutine(wait1());
-    }
-
-    private IEnumerator wait1()
-    {
-        yield return new WaitForSeconds(1f);
     }
 }

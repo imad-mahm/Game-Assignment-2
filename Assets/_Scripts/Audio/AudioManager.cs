@@ -6,11 +6,12 @@ public class AudioManager : MonoBehaviour
     public static AudioManager Instance { get; private set; }
 
     [Header("Audio Sources")]
-    [SerializeField] private AudioSource musicSource; 
-    [SerializeField] private AudioSource sfxSource;    
-    
-    [Header("Startup Music")]
-    [SerializeField] private AudioClip startupMusic;
+    [SerializeField] private AudioSource musicSource;    // Main music channel
+    [SerializeField] private AudioSource sfxSource;      // SFX channel
+
+    [Header("Music Tracks")]
+    [SerializeField] private AudioClip menuMusic;
+    [SerializeField] private AudioClip gameplayMusic;
 
     [Header("Default Volumes")]
     [Range(0f, 1f)] public float defaultMusicVolume = 0.3f;
@@ -48,11 +49,26 @@ public class AudioManager : MonoBehaviour
         SetMusicVolume(musicVol);
         SetSfxVolume(sfxVol);
     }
-    
+
     private void Start()
     {
-        if (startupMusic != null)
-            PlayMusic(startupMusic, true);
+        if (menuMusic != null)
+            PlayMenuMusic();
+    }
+
+    public void PlayMenuMusic()
+    {
+        PlayMusic(menuMusic, true);
+    }
+    public void PlayGameplayMusic()
+    {
+        if (gameplayMusic == null)
+        {
+            musicSource.Stop();
+            return;
+        }
+
+        PlayMusic(gameplayMusic, true);
     }
 
     public void PlayMusic(AudioClip clip, bool loop = true)
@@ -79,16 +95,16 @@ public class AudioManager : MonoBehaviour
         PlayerPrefs.SetFloat(MusicVolKey, volume);
     }
 
-    public void PlaySfx(AudioClip clip)
-    {
-        if (clip == null) return;
-        sfxSource.PlayOneShot(clip);
-    }
-
     public void SetSfxVolume(float volume)
     {
         volume = Mathf.Clamp01(volume);
         sfxSource.volume = volume;
         PlayerPrefs.SetFloat(SfxVolKey, volume);
+    }
+
+    public void PlaySfx(AudioClip clip)
+    {
+        if (clip == null) return;
+        sfxSource.PlayOneShot(clip);
     }
 }
