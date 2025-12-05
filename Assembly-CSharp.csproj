@@ -50,6 +50,7 @@
     <Compile Include="Assets\Animation_Textures\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_TextEventCheck.cs" />
     <Compile Include="Assets\Animation_Textures\TextMesh Pro\Examples &amp; Extras\Scripts\VertexZoom.cs" />
     <Compile Include="Assets\Animation_Textures\TextMesh Pro\Examples &amp; Extras\Scripts\VertexJitter.cs" />
+    <Compile Include="Assets\_Scripts\Save\NotificationManager.cs" />
     <Compile Include="Assets\Animation_Textures\TextMesh Pro\Examples &amp; Extras\Scripts\WarpTextExample.cs" />
     <Compile Include="Assets\Animation_Textures\TextMesh Pro\Examples &amp; Extras\Scripts\TextMeshSpawner.cs" />
     <Compile Include="Assets\_Scripts\Player\Collecting.cs" />
@@ -64,6 +65,7 @@
     <Compile Include="Assets\_Scripts\Misc\MeshCombiner.cs" />
     <Compile Include="Assets\Animation_Textures\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_TextSelector_A.cs" />
     <Compile Include="Assets\Animation_Textures\TextMesh Pro\Examples &amp; Extras\Scripts\TextMeshProFloatingText.cs" />
+    <Compile Include="Assets\_Scripts\Save\PlayerSaveHandler.cs" />
     <Compile Include="Assets\Animation_Textures\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_DigitValidator.cs" />
     <Compile Include="Assets\Animation_Textures\TextMesh Pro\Examples &amp; Extras\Scripts\VertexShakeA.cs" />
     <Compile Include="Assets\Animation_Textures\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_UiFrameRateCounter.cs" />
@@ -76,6 +78,7 @@
     <Compile Include="Assets\Table\DemoScene\Scripts\RotationOffset.cs" />
     <Compile Include="Assets\Animation_Textures\Scripts\2nd Animation\TextureScrollAndFlash.cs" />
     <Compile Include="Assets\Animation_Textures\TextMesh Pro\Examples &amp; Extras\Scripts\TextConsoleSimulator.cs" />
+    <Compile Include="Assets\_Scripts\Save\SaveData.cs" />
     <Compile Include="Assets\_Scripts\UI\UIButtonSound.cs" />
     <Compile Include="Assets\Animation_Textures\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_TextInfoDebugTool.cs" />
     <Compile Include="Assets\_Scripts\HUD\HUD_Manager.cs" />
@@ -93,6 +96,7 @@
     <Compile Include="Assets\Animation_Textures\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_ExampleScript_01.cs" />
     <Compile Include="Assets\_Scripts\HUD\HUD_Health.cs" />
     <Compile Include="Assets\Animation_Textures\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark02.cs" />
+    <Compile Include="Assets\_Scripts\Save\SaveManager.cs" />
     <Compile Include="Assets\Animation_Textures\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark03.cs" />
     <Compile Include="Assets\Animation_Textures\TextMesh Pro\Examples &amp; Extras\Scripts\TMPro_InstructionOverlay.cs" />
     <Compile Include="Assets\_Scripts\Player\PlayerStats.cs" />

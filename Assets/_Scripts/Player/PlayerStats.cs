@@ -5,8 +5,8 @@ using UnityEngine;
 
 public class PlayerStats : MonoBehaviour
 {
-    [SerializeField] private float maxHealth = 100f;
-    private float currentHealth;
+    [SerializeField] public float maxHealth = 100f;
+    public float currentHealth;
 
     public event System.Action<float> OnHealthChanged;
 
