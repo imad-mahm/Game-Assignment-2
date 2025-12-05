@@ -8,8 +8,28 @@ public class PlayerSaveHandler : MonoBehaviour
 
     private void Start()
     {
-        // OPTIONAL: auto-load on start
-        // LoadPlayer();
+        // Check if we must load saved data when the scene starts
+        LoadFromMenu();
+    }
+
+    // Called only when loading from main menu
+    private void LoadFromMenu()
+    {
+        if (PlayerPrefs.GetInt("LoadGameFlag", 0) == 1)
+        {
+            PlayerPrefs.SetInt("LoadGameFlag", 0);
+
+            SaveData data = SaveManager.LoadGame();
+            if (data != null)
+            {
+                ApplyLoadedData(data);
+                NotificationManager.Instance.ShowMessage("Game Loaded!", Color.green);
+            }
+            else
+            {
+                NotificationManager.Instance.ShowMessage("No Save Found!", Color.red);
+            }
+        }
     }
 
     public SaveData CreateSaveData()
@@ -41,63 +61,46 @@ public class PlayerSaveHandler : MonoBehaviour
     {
         if (data == null) return;
 
+        // Restore health
         playerStats.currentHealth = Mathf.Clamp(data.playerHealth, 0f, playerStats.maxHealth);
-
         playerStats.Heal(0);
 
-        // Load position
-        transform.position = new Vector3(
+        // Saved position & rotation
+        Vector3 savedPos = new Vector3(
             data.playerPosition[0],
             data.playerPosition[1],
             data.playerPosition[2]
         );
 
-        // Load rotation
-        transform.eulerAngles = new Vector3(
+        Vector3 savedRot = new Vector3(
             data.playerRotation[0],
             data.playerRotation[1],
             data.playerRotation[2]
         );
 
-        // Load collectibles
+        CharacterController cc = GetComponent<CharacterController>();
+        if (cc != null)
+        {
+            cc.enabled = false;
+            transform.position = savedPos;    // apply position
+            transform.eulerAngles = savedRot; // apply rotation
+            cc.enabled = true;
+        }
+        else
+        {
+            transform.position = savedPos;
+            transform.eulerAngles = savedRot;
+        }
+
+        // Restore collectibles
         collectibleCount = data.collectibleCount;
     }
-
 
 
     public void SavePlayer()
     {
         SaveData data = CreateSaveData();
         SaveManager.SaveGame(data);
-        
         NotificationManager.Instance.ShowMessage("Game Saved!", Color.green);
     }
-
-    public void LoadPlayer()
-    {
-        SaveData data = SaveManager.LoadGame();
-
-        if (data == null)
-        {
-            NotificationManager.Instance.ShowMessage("No Save Found!", Color.red);
-            return;
-        }
-
-        ApplyLoadedData(data);
-
-        // Show notification
-        NotificationManager.Instance.ShowMessage("Game Loaded!", Color.green);
-
-        // Start game automatically
-        MenuManager menu = FindObjectOfType<MenuManager>();
-        if (menu != null)
-        {
-            menu.StartGame(); 
-        }
-
-        // Ensure unpaused
-        PauseManager pause = FindObjectOfType<PauseManager>();
-        pause?.ResumeGame();
-    }
-
 }

@@ -9,17 +9,15 @@ public class MenuManager : MonoBehaviour
 
     private void Start()
     {
-        // make sure we are showing the menu when the scene loads
         menuWindow.SetActive(true);
         settingsWindow.SetActive(false);
 
-        // play the menu music every time we open this scene
         if (AudioManager.Instance != null)
         {
-            AudioManager.Instance.PlayMenuMusic();   // play menu music
+            AudioManager.Instance.PlayMenuMusic(); 
         }
 
-        Cursor.lockState = CursorLockMode.None;      // unlock mouse in menu
+        Cursor.lockState = CursorLockMode.None;     
         Cursor.visible = true;
     }
 
@@ -28,10 +26,10 @@ public class MenuManager : MonoBehaviour
         // switch to gameplay scene
         if (AudioManager.Instance != null)
         {
-            AudioManager.Instance.PlayGameplayMusic();   // play gameplay music when starting
+            AudioManager.Instance.PlayGameplayMusic();
         }
 
-        LoadNextLevel();  // load the game scene
+        LoadNextLevel(); 
     }
 
     private void LoadNextLevel()
@@ -47,24 +45,42 @@ public class MenuManager : MonoBehaviour
 
     public void OpenSettings()
     {
-        // hide main buttons and show settings panel
         menuWindow.SetActive(false);
         settingsWindow.SetActive(true);
     }
 
     public void CloseSettings()
     {
-        // go back to main menu
         settingsWindow.SetActive(false);
         menuWindow.SetActive(true);
     }
+    
+    public void LoadGame()
+    {
+        if (!SaveManager.SaveExists())
+        {
+            Debug.LogWarning("No save file found to load.");
+            return;
+        }
+
+        PlayerPrefs.SetInt("LoadGameFlag", 1);
+
+        // Switch to gameplay music
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlayGameplayMusic();
+        }
+
+        LoadNextLevel();
+    }
+
 
     public void ExitGame()
     {
         Application.Quit();
 
-        #if UNITY_EDITOR
-                UnityEditor.EditorApplication.isPlaying = false;
-        #endif
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#endif
     }
 }

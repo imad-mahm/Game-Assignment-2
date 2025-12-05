@@ -650,27 +650,27 @@ PrefabInstance:
     - target: {fileID: 6398979003074360115, guid: 41fd19fc79723e34e88db6061ac6fa5a,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6398979003074360115, guid: 41fd19fc79723e34e88db6061ac6fa5a,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 761163707}
     - target: {fileID: 6398979003074360115, guid: 41fd19fc79723e34e88db6061ac6fa5a,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: 
+      value: LoadGame
       objectReference: {fileID: 0}
     - target: {fileID: 6398979003074360115, guid: 41fd19fc79723e34e88db6061ac6fa5a,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: 
+      value: MenuManager, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 6398979003074360115, guid: 41fd19fc79723e34e88db6061ac6fa5a,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
-      value: 
+      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 6655409859873449697, guid: 41fd19fc79723e34e88db6061ac6fa5a,
         type: 3}
