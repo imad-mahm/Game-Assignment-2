@@ -5,23 +5,39 @@ using UnityEngine;
 
 public class PlayerStats : MonoBehaviour
 {
-    private float maxHealth;
-    private float currentHealth;
-    
-    
-    
-    
+    [SerializeField] public float maxHealth = 100f;
+    public float currentHealth;
+
+    public event System.Action<float> OnHealthChanged;
+
     void Start()
     {
         currentHealth = maxHealth;
+        NotifyHealthChanged();
     }
 
-    // Update is called once per frame
     void Update()
     {
-        //add the health regen part
+        
     }
 
+    public void TakeDamage(float amount)
+    {
+        currentHealth = Mathf.Clamp(currentHealth - amount, 0f, maxHealth);
+        NotifyHealthChanged();
+    }
+
+    public void Heal(float amount)
+    {
+        currentHealth = Mathf.Clamp(currentHealth + amount, 0f, maxHealth);
+        NotifyHealthChanged();
+    }
+
+    private void NotifyHealthChanged()
+    {
+        float normalized = currentHealth / maxHealth; // 0 to 1
+        OnHealthChanged?.Invoke(normalized);
+    }
 
     private void OnTriggerEnter(Collider other)
     {

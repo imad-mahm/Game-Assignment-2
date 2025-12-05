@@ -9,7 +9,7 @@ TagManager:
   - Collectable
   - RiftCloser
   - WorkBench
-  - Ground
+  - Rift
   layers:
   - Default
   - TransparentFX

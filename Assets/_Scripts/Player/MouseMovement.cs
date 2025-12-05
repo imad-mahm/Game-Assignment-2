@@ -7,7 +7,7 @@ public class MouseMovement : MonoBehaviour
     public float mouseSensitivity;
 
     private float xRotation = 0f;
-    private float yRotation = 0f;
+    
 
     public float topClamp = -90f;
     public float bottomClamp = 90f;

@@ -8,13 +8,18 @@ public class Collecting : MonoBehaviour
    [SerializeField] private GameObject weapon;
    [SerializeField] private GameObject arrow1;
    [SerializeField] private GameObject arrow2;
+   [SerializeField] private AudioSource audioSource;
+   [SerializeField] private AudioClip audioClip;
+   public bool crafted = false;
    
    
    private float collected=0f;
-   private void OnCollisionEnter(Collision other)
+   private void OnTriggerEnter(Collider other)
    {
+      
       if (other.gameObject.CompareTag("Collectable"))
       {
+         audioSource.PlayOneShot(audioClip);
          collected+=1f;
          other.gameObject.SetActive(false);
       }
@@ -24,15 +29,19 @@ public class Collecting : MonoBehaviour
          arrow1.SetActive(true);
          arrow2.SetActive(true);
       }
+      
    }
 
-   private void OnTriggerEnter(Collider other)
+   private void OnTriggerStay(Collider other)
    {
       if (other.gameObject.CompareTag("WorkBench") && collected == 5f)
       {
          Debug.Log("Press E");
-         if (Input.GetKeyDown(KeyCode.E))
+         if (Input.GetKey(KeyCode.E))
+         {
             weapon.SetActive(true);
+            crafted = true;
+         }
       }
    }
 }
