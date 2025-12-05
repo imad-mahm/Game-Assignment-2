@@ -7,6 +7,8 @@ public class PlayerStats : MonoBehaviour
 {
     [SerializeField] public float maxHealth = 100f;
     public float currentHealth;
+    public EnemyData shooterso;
+    public EnemyData meleeso;
 
     public static event System.Action<float> OnHealthChanged;
 
@@ -14,12 +16,6 @@ public class PlayerStats : MonoBehaviour
     {
         currentHealth = maxHealth;
         NotifyHealthChanged();
-    }
-
-    void Update()
-    {
-        
-        
     }
 
     public void TakeDamage(float amount)
@@ -44,7 +40,12 @@ public class PlayerStats : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Bullet"))
         {
-            //get bullet damage value and remove it from hp
+            TakeDamage(shooterso.damageValue);
+        }
+
+        if (other.gameObject.CompareTag("Melee"))
+        {
+            TakeDamage(meleeso.damageValue);
         }
     }
 }

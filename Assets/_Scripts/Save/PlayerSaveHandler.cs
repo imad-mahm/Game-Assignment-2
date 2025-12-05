@@ -41,7 +41,7 @@ public class PlayerSaveHandler : MonoBehaviour
     {
         if (data == null) return;
 
-        playerStats.currentHealth = Mathf.Clamp(data.playerHealth, 0f, playerStats.maxHealth);
+        playerStats.currentHealth = Mathf.Clamp(data.playerHealth, 0f, 100);
 
         playerStats.Heal(0);
 

@@ -10,6 +10,7 @@ TagManager:
   - RiftCloser
   - WorkBench
   - Rift
+  - Melee
   layers:
   - Default
   - TransparentFX
