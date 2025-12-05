@@ -1,319 +1,358 @@
-using System.Linq;
-using System.Threading;
-using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.AI;
+using System.Collections;
 
-namespace _Scripts.Enemies
+public class EnemyScript : MonoBehaviour
 {
-    public class EnemyScript : MonoBehaviour
+    public EnemyData data;
+    public Transform[] patrolPoints;
+    public Transform player;
+
+    private NavMeshAgent agent;
+    private int patrolIndex = 0;
+    private float attackTimer = 0f;
+    private float searchTimer = 0f;
+
+    private enum State { Patrol, Chase, Search, Attack }
+    private State currentState = State.Patrol;
+
+    private Vector3 lastKnownPlayerPos;
+    private bool playerVisible = false;
+
+    // Tunables
+    [SerializeField] private float arriveThreshold = 0.25f;
+    [SerializeField] private float rotationLerpSpeed = 10f; // used during movement
+    [SerializeField] private float attackRotateSpeed = 360f; // degrees per second
+
+    void Start()
     {
-        [SerializeField] private EnemyData enemySO;
-        [SerializeField] private float scanDelay;
-        private enum States
+        agent = GetComponent<NavMeshAgent>();
+
+        if (agent == null)
         {
-            Patrol,
-            Chase,
-            Attack,
-            Scan
-        }
-    
-        [SerializeField] private States currState = States.Patrol;
-        private float baseY;
-
-        private NavMeshAgent _agent;
-        // private Animator _anim;
-        private AudioSource _audioSource;
-        private Transform _player;
-        [CanBeNull] public Transform projectileSpawn;
-
-
-        public Transform patrolPointsParent;
-        private Transform[] _patrolPoints;
-        private int _currentPatrolIndex;
-        
-        private bool _alreadyAttacked;
-        
-        void Awake()
-        { 
-            _player = GameObject.FindGameObjectWithTag("Player").transform;
-            _agent = GetComponent<NavMeshAgent>();
-            _audioSource = GetComponent<AudioSource>();
-            // _anim = GetComponent<Animator>();
-            baseY = transform.eulerAngles.y;
+            Debug.LogError("NavMeshAgent missing!");
+            enabled = false;
+            return;
         }
 
-        // Start is called before the first frame update
-
-        void Start()
+        if (data == null)
         {
-            if (enemySO == null)
+            Debug.LogError("EnemyData (data) not assigned!");
+            enabled = false;
+            return;
+        }
+
+        agent.speed = data.walkSpeed;
+        agent.acceleration = 50f;
+        agent.angularSpeed = 1200f; // high because we manually rotate
+        agent.autoBraking = false;
+
+        // We control rotation manually so the agent doesn't fight us.
+        agent.updateRotation = false;
+        agent.updatePosition = true;
+
+        // Stopping distance small — shooter stops by logic, not by large stoppingDistance
+        agent.stoppingDistance = data.enemyType == EnemyType.Shooter ? 0.5f : 0.5f;
+
+        // Ensure patrolPoints is not null
+        if (patrolPoints == null || patrolPoints.Length == 0)
+        {
+            Debug.LogWarning($"{name}: No patrol points assigned.");
+        }
+        else
+        {
+            SetDestinationToCurrentPatrol(); // set first destination but don't advance index yet
+        }
+    }
+
+    void Update()
+    {
+        attackTimer += Time.deltaTime;
+
+        DetectPlayer();
+
+        switch (currentState)
+        {
+            case State.Patrol:
+                PatrolState();
+                break;
+            case State.Chase:
+                ChaseState();
+                break;
+            case State.Search:
+                SearchState();
+                break;
+            case State.Attack:
+                AttackState();
+                break;
+        }
+    }
+
+    // ---------------------- DETECTION -------------------------
+    void DetectPlayer()
+    {
+        if (player == null)
+        {
+            playerVisible = false;
+            return;
+        }
+
+        Vector3 dir = player.position - transform.position;
+        float dist = dir.magnitude;
+
+        // Distance check
+        if (dist > data.sightRange)
+        {
+            playerVisible = false;
+            return;
+        }
+
+        // Angle check (use half-angle)
+        float angle = Vector3.Angle(transform.forward, dir);
+        if (angle > data.sightAngle * 0.5f)
+        {
+            playerVisible = false;
+            return;
+        }
+
+        // Raycast check (cast from eye height to player)
+        Vector3 origin = transform.position + Vector3.up * 1.2f;
+        Vector3 dirNorm = dir.normalized;
+        if (Physics.Raycast(origin, dirNorm, out RaycastHit hit, data.sightRange))
+        {
+            if (hit.collider.CompareTag("Player"))
             {
-                Debug.LogError($"EnemyData not assigned to {name}");
-                enabled = false;
+                playerVisible = true;
+                lastKnownPlayerPos = player.position;
+
+                // If we see the player, go to chase (or attack will be decided in ChaseState)
+                if (currentState != State.Attack)
+                    currentState = State.Chase;
+
                 return;
             }
-            
-            _agent.speed = enemySO.walkSpeed;
-        
-            if (patrolPointsParent != null)
-            {
-                 _patrolPoints = patrolPointsParent.GetComponentsInChildren<Transform>().Where(t => t != patrolPointsParent) .ToArray();
-
-                if (_patrolPoints.Length > 0)
-                {
-                    SetClosestPatrolPoint();
-                }
-            }
-
         }
-    
-        // Update is called once per frame
-        private void Update()
+
+        playerVisible = false;
+    }
+
+    // ---------------------- PATROL -------------------------
+    void PatrolState()
+    {
+        if (patrolPoints == null || patrolPoints.Length == 0) return;
+
+        // Ensure agent moving to the current patrol point
+        if (!agent.hasPath || agent.pathPending || agent.remainingDistance <= arriveThreshold)
         {
-            float angle = Mathf.Sin(Time.time * enemySO.scanSpeed * Mathf.Deg2Rad) * enemySO.scanAngle;
-            transform.rotation = Quaternion.Euler(0, baseY + angle, 0);
-            
-            PlayerInSight();
-            PlayerInAttackRange();
+            // If we arrived (or no path), set next point
+            if (!agent.pathPending && agent.remainingDistance <= arriveThreshold)
+                AdvancePatrolIndexAndSetDestination();
+            else if (!agent.hasPath)
+                SetDestinationToCurrentPatrol();
+        }
 
-            switch (currState)
+        // movement rotation: rotate toward movement direction every frame
+        ApplyMovementRotation();
+
+        // If we spotted the player, start chase logic
+        if (playerVisible)
+        {
+            agent.isStopped = false;
+            agent.speed = data.chaseSpeed;
+            currentState = State.Chase;
+        }
+    }
+
+    void SetDestinationToCurrentPatrol()
+    {
+        if (patrolPoints.Length == 0) return;
+        agent.isStopped = false;
+        agent.speed = data.walkSpeed;
+        agent.SetDestination(patrolPoints[patrolIndex].position);
+    }
+
+    void AdvancePatrolIndexAndSetDestination()
+    {
+        patrolIndex = (patrolIndex + 1) % patrolPoints.Length;
+        SetDestinationToCurrentPatrol();
+    }
+
+    // ---------------------- CHASE -------------------------
+    void ChaseState()
+    {
+        // If lost sight → go to Search (go to last known position)
+        if (!playerVisible)
+        {
+            searchTimer = data.searchingDelay;
+            currentState = State.Search;
+            agent.isStopped = false;
+            agent.SetDestination(lastKnownPlayerPos);
+            return;
+        }
+
+        agent.speed = data.chaseSpeed;
+        agent.isStopped = false;
+
+        if (data.enemyType == EnemyType.MeleeCombatant)
+        {
+            // Melee: chase directly
+            agent.SetDestination(player.position);
+
+            // Rotate to face movement while moving
+            ApplyMovementRotation();
+
+            if (Vector3.Distance(transform.position, player.position) <= data.attackRange)
             {
-                case States.Patrol:
-                    Patrol();
-                    if (PlayerInSight() && enemySO.enemyType == EnemyType.MeleeCombatant)
-                    {
-                        currState = States.Chase;
-                    }
-                    else if (PlayerInSight() && enemySO.enemyType == EnemyType.Shooter)
-                    {
-                        currState = States.Attack;
-                    }
-
-                    break;
-                case States.Chase:
-                    Chase();
-                    if (PlayerInAttackRange() && enemySO.enemyType == EnemyType.MeleeCombatant)
-                    {
-                        currState = States.Attack;
-                    }
-                    else if (!PlayerInSight() && enemySO.enemyType == EnemyType.MeleeCombatant)
-                    {
-                        currState = States.Scan;
-                        Thread.Sleep((int)(enemySO.searchingDelay * 1000));
-                        currState = States.Patrol;
-                    }
-                    break;
-                case States.Attack:
-                    Attack();
-                    if (!PlayerInAttackRange() && PlayerInSight() && enemySO.enemyType == EnemyType.MeleeCombatant)
-                    {
-                        currState = States.Chase;
-                    }
-                    else if (!PlayerInSight())
-                    {
-                        currState = States.Scan;
-                        scanDelay = 0;
-                    }
-
-                    break;
-                case States.Scan:
-                    if (scanDelay == 0)
-                    {
-                        Scan();
-                    }
-                    else if (scanDelay < enemySO.searchingDelay)
-                    {
-                        scanDelay += Time.deltaTime;
-                    }
-                    else
-                    {
-                        currState = States.Patrol;
-                    }
-                    if (PlayerInSight())
-                    {
-                        currState = States.Attack;
-                    }
-                    break;
-                
+                currentState = State.Attack;
             }
         }
-    
-        #region Enemy Checks
-
-        private bool PlayerInSight()
+        else // Shooter
         {
-            var directionToPlayer = (_player.position - transform.position).normalized;
-            var distance = Vector3.Distance(transform.position, _player.position);
-            var angle = Vector3.Angle(transform.forward, directionToPlayer);
+            float dist = Vector3.Distance(transform.position, player.position);
 
-            return distance <= enemySO.sightRange && angle <= enemySO.sightAngle / 2;
-        }
-
-        private bool PlayerInAttackRange()
-        {
-            var directionToPlayer = (_player.position - transform.position).normalized;
-            var distance = Vector3.Distance(transform.position, _player.position);
-            var angle = Vector3.Angle(transform.forward, directionToPlayer);
-
-            return distance <= enemySO.attackRange && angle <= enemySO.sightAngle / 2;
-        }
-
-        #endregion
-
-    
-        #region Patrol Logic
-
-        // ReSharper disable Unity.PerformanceAnalysis
-        private void Patrol()
-        {
-            Debug.Log("Entered Patrol State...");
-
-            if (_patrolPoints == null || _patrolPoints.Length == 0)
+            // Keep distance: move if outside comfortable range; stop when near desired range
+            float desiredDist = data.attackRange * 0.9f;
+            if (dist > desiredDist + 0.1f) // a small hysteresis so it doesn't constantly toggle
             {
-                Debug.LogWarning("Patrol points do not exist.");
-                return;
+                agent.isStopped = false;
+                agent.SetDestination(player.position);
+                ApplyMovementRotation();
+            }
+            else
+            {
+                // close enough — stop moving so we can aim & shoot
+                agent.isStopped = true;
             }
 
-            _agent.speed = enemySO.walkSpeed;
-            // _anim.SetFloat("Speed", 0.5f, 0.1f, Time.deltaTime);
-
-            var targetPoint = _patrolPoints[_currentPatrolIndex];
-            _agent.SetDestination(targetPoint.position);
-            if (Vector3.Distance(transform.position, targetPoint.position) < 1)
+            // If within attackRange (strict), enter Attack
+            if (dist <= data.attackRange)
             {
-                GoToNextPatrolPoint();
+                currentState = State.Attack;
             }
         }
+    }
 
-        private void SetClosestPatrolPoint()
+    // ---------------------- SEARCH -------------------------
+    void SearchState()
+    {
+        if (playerVisible)
         {
-            var closestDistance = float.MaxValue;
-            int closestIndex = 0;
-
-            for (int i = 0; i < _patrolPoints.Length; i++)
-            {
-                var distance = Vector3.Distance(transform.position, _patrolPoints[i].position);
-
-                if (distance < closestDistance)
-                {
-                    closestDistance = distance;
-                    closestIndex = i;
-                }
-            }
-
-            _currentPatrolIndex = closestIndex;
-            _agent.SetDestination(_patrolPoints[_currentPatrolIndex].position);
+            currentState = State.Chase;
+            return;
         }
 
-        private void GoToNextPatrolPoint()
+        // If agent still moving towards last known pos, allow it
+        if (!agent.pathPending && agent.remainingDistance > arriveThreshold)
         {
-            _currentPatrolIndex = (_currentPatrolIndex + 1) % _patrolPoints.Length;
-            _agent.SetDestination(_patrolPoints[_currentPatrolIndex].position);
+            ApplyMovementRotation();
+            return;
         }
 
-        #endregion
+        // We reached the last known position; rotate in place and countdown
+        searchTimer -= Time.deltaTime;
 
-        private void Chase()
+        // rotate in place using scanSpeed (deg/sec)
+        transform.Rotate(Vector3.up * data.scanSpeed * Time.deltaTime);
+
+        if (searchTimer <= 0f)
         {
-            Debug.Log("Entered Chase State...");
-            _agent.speed = enemySO.chaseSpeed;
-            _agent.SetDestination(_player.position);
+            currentState = State.Patrol;
+            // set next patrol destination
+            AdvancePatrolIndexAndSetDestination();
+        }
+    }
 
-            // _anim.SetFloat("Speed", 1, 0.1f, Time.deltaTime);
-
-            var direction = (_player.position - transform.position).normalized;
-            direction.y = 0;
-
-            if (direction != Vector3.zero)
-            {
-                var lookRotation = Quaternion.LookRotation(direction);
-                transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5);
-            }
+    // ---------------------- ATTACK -------------------------
+    void AttackState()
+    {
+        if (!playerVisible)
+        {
+            // lost sight while attacking → search last known pos
+            currentState = State.Search;
+            searchTimer = data.searchingDelay;
+            agent.isStopped = false;
+            agent.SetDestination(lastKnownPlayerPos);
+            return;
         }
 
-        // ReSharper disable Unity.PerformanceAnalysis
-        private void Attack()
+        // distance check
+        float dist = Vector3.Distance(transform.position, player.position);
+        if (dist > data.attackRange)
         {
-            Debug.Log("Entered Attack State...");
-            _agent.SetDestination(transform.position);
-            transform.LookAt(_player);
-        
-            // _anim.SetTrigger("Attack");
-
-            if (!_alreadyAttacked)
-            {
-                switch (enemySO.enemyType)
-                {
-                    case EnemyType.Shooter:
-                        PerformRangedAttack();
-                        break;
-                    case EnemyType.MeleeCombatant:
-                        PerformMeleeAttack();
-                        break;
-                }
-
-                _alreadyAttacked = true;
-                Invoke(nameof(ResetAttack), enemySO.attackCooldown);
-            }
+            // If player stepped out of strict attackRange, go back to chase
+            currentState = State.Chase;
+            agent.isStopped = false;
+            return;
         }
 
-        // ReSharper disable Unity.PerformanceAnalysis
-        private void PerformRangedAttack()
+        // Stop agent and rotate toward player smoothly
+        agent.isStopped = true;
+        RotateTowardsPlayer();
+
+        if (attackTimer >= data.attackCooldown)
         {
-            if (!enemySO.projectilePrefab)
+            attackTimer = 0f;
+
+            if (data.enemyType == EnemyType.MeleeCombatant)
             {
-                Debug.LogWarning($"{enemySO.name} is a shooter but has no projectile prefab assigned!");
-                return;
+                // Hook melee attack here (animation & damage)
+                Debug.Log("MELEE HIT!");
             }
-
-            if (projectileSpawn)
+            else if (data.enemyType == EnemyType.Shooter)
             {
-                var projectile = ObjectPooler.GetFromPool("bullet", projectileSpawn.transform.position, Quaternion.identity);
-
-                if (enemySO.gunshotSfx != null)
-                {
-                    var gunshot = enemySO.gunshotSfx[Random.Range(0, enemySO.gunshotSfx.Length)];
-                    _audioSource.pitch = Random.Range(0.9f, 1.2f);
-                    _audioSource.volume = Random.Range(0.8f, 1f);
-                    _audioSource.PlayOneShot(gunshot);
-                }
-
-                var rb = projectile.GetComponent<Rigidbody>();
-
-                if (rb)
-                {
-                    var direction = (_player.position - transform.position).normalized;
-                    rb.velocity = direction * enemySO.projectileSpeed;
-                }
-                else
-                {
-                    Debug.LogWarning("Bullet does not have a rigidbody.");
-                }
-                
-                ObjectPooler.ReleaseFromPool(projectile, 2);
+                ShootProjectile();
             }
         }
+    }
 
-        private void ResetAttack()
+    void RotateTowardsPlayer()
+    {
+        if (player == null) return;
+        Vector3 dir = player.position - transform.position;
+        dir.y = 0f;
+        if (dir.sqrMagnitude < 0.0001f) return;
+        Quaternion target = Quaternion.LookRotation(dir.normalized);
+        transform.rotation = Quaternion.RotateTowards(transform.rotation, target, attackRotateSpeed * Time.deltaTime);
+    }
+
+    void ApplyMovementRotation()
+    {
+        // Prefer agent.velocity, but if it's near zero (stuck/in corners), use desiredVelocity fallback
+        Vector3 move = agent.velocity;
+        if (move.sqrMagnitude < 0.0001f)
+            move = agent.desiredVelocity;
+
+        if (move.sqrMagnitude > 0.0001f)
         {
-            _alreadyAttacked = false;
+            move.y = 0f;
+            Quaternion target = Quaternion.LookRotation(move.normalized);
+            transform.rotation = Quaternion.Lerp(transform.rotation, target, Time.deltaTime * rotationLerpSpeed);
+        }
+    }
+
+    void ShootProjectile()
+    {
+        if (data.projectilePrefab == null)
+        {
+            Debug.LogWarning("No projectile prefab assigned for shooter.");
+            return;
         }
 
-        private void PerformMeleeAttack()
+        // spawn a bit in front and a bit up
+        Vector3 spawnPos = transform.position + transform.forward * 1f + Vector3.up * 1f;
+        GameObject proj = Instantiate(data.projectilePrefab, spawnPos, Quaternion.identity);
+        var rb = proj.GetComponent<Rigidbody>();
+        if (rb != null)
         {
-            // TODO: Melee Attack
+            // fire towards player's current position (flattened Y)
+            Vector3 aim = player.position - spawnPos;
+            aim.y = 0f;
+            rb.velocity = aim.normalized * data.projectileSpeed;
         }
 
-        private void Scan()
+        if (data.gunshotSfx != null && data.gunshotSfx.Length > 0)
         {
-            if (enemySO.enemyType == EnemyType.MeleeCombatant)
-            {
-                // rotate left and right slowly
-                float angle = Mathf.Sin(Time.time * enemySO.scanSpeed * Mathf.Deg2Rad) * enemySO.scanAngle;
-                transform.rotation = Quaternion.Euler(0, baseY + angle, 0);
-            }
+            AudioSource.PlayClipAtPoint(data.gunshotSfx[Random.Range(0, data.gunshotSfx.Length)], transform.position);
         }
-
     }
 }

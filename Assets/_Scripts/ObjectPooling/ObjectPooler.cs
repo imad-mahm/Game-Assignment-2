@@ -20,6 +20,7 @@ public class ObjectPooler : MonoBehaviour
 
     private void Start()
     {
+        Instance = this;
         PoolDictionary = new Dictionary<string, Queue<GameObject>>();
 
         foreach (var pool in pools)
@@ -28,7 +29,7 @@ public class ObjectPooler : MonoBehaviour
 
             for (int i = 0; i < pool.PoolSize; i++)
             {
-                var obj = Instantiate(pool.Prefab);
+                var obj = Instantiate(pool.Prefab, transform);
                 obj.SetActive(false);
 
                 objectPool.Enqueue(obj);
@@ -53,32 +54,32 @@ public class ObjectPooler : MonoBehaviour
         objectToSpawn.transform.rotation = rot;
 
         var pooledObject = objectToSpawn.GetComponent<IPooledObject>();
-
         if (pooledObject != null)
         {
             pooledObject.OnObjectSpawn();
         }
-
-        PoolDictionary[tag].Enqueue(objectToSpawn);
-
+            
         return objectToSpawn;
     }
+
 
     public static void ReleaseFromPool(GameObject obj, float delay = 0f)
     {
         if (delay <= 0)
         {
             obj.SetActive(false);
+            PoolDictionary[obj.tag].Enqueue(obj); // enqueue here
         }
         else
         {
             Instance.StartCoroutine(Instance.ReleaseAfterDelay(obj, delay));
         }
     }
-    
+
     private IEnumerator ReleaseAfterDelay(GameObject obj, float delay)
     {
         yield return new WaitForSeconds(delay);
         obj.SetActive(false);
+        PoolDictionary[obj.tag].Enqueue(obj); // enqueue here
     }
 }
