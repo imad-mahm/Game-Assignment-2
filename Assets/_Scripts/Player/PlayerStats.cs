@@ -18,21 +18,7 @@ public class PlayerStats : MonoBehaviour
 
     void Update()
     {
-        // TEST: Damage
-        if (Input.GetKeyDown(KeyCode.J))
-        {
-            Debug.Log("HIT! Before damage: " + currentHealth);
-            TakeDamage(10f);
-            Debug.Log("After damage: " + currentHealth);
-        }
-
-        // TEST: Heal
-        if (Input.GetKeyDown(KeyCode.H))
-        {
-            Debug.Log("HEAL! Before heal: " + currentHealth);
-            Heal(10f);
-            Debug.Log("After heal: " + currentHealth);
-        }
+        
     }
 
     public void TakeDamage(float amount)
