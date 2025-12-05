@@ -76,6 +76,8 @@ public class PauseManager : MonoBehaviour
 
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
+        
+        AudioManager.Instance.PlayMenuMusic();
 
         if (menuManager != null)
         {
